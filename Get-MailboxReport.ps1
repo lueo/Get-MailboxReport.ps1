@@ -196,6 +196,8 @@ foreach ($mb in $mailboxes)
 
 	$user = Get-User $mb
 	$aduser = Get-ADUser $mb.samaccountname -Properties Enabled,AccountExpirationDate
+	
+	$casmb = $mb | Get-CASMailbox
 
 	#Create a custom PS object to aggregate the data we're interested in
 	
@@ -214,7 +216,7 @@ foreach ($mb in $mailboxes)
     $userObj | Add-Member NoteProperty -Name "Inbox Folder Size (Mb)" -Value $inboxstats.FolderandSubFolderSize.ToMB()
     $userObj | Add-Member NoteProperty -Name "Sent Items Folder Size (Mb)" -Value $sentitemsstats.FolderandSubFolderSize.ToMB()
     $userObj | Add-Member NoteProperty -Name "Deleted Items Folder Size (Mb)" -Value $deleteditemsstats.FolderandSubFolderSize.ToMB()
-
+    
     if ($archivestats -eq "n/a")
     {
         $userObj | Add-Member NoteProperty -Name "Total Archive Size (Mb)" -Value "n/a"
@@ -247,6 +249,7 @@ foreach ($mb in $mailboxes)
     $userObj | Add-Member NoteProperty -Name "Primary Email Address" -Value $mb.PrimarySMTPAddress
     $userObj | Add-Member NoteProperty -Name "Organizational Unit" -Value $user.OrganizationalUnit
 
+	$userObj | Add-Member NoteProperty -Name "Active Sync Enabled" -Value $casmb.ActiveSyncEnabled
 	
 	#Add the object to the report
 	$report = $report += $userObj
@@ -268,7 +271,7 @@ else
 	}
 	else
 	{
-		$report | Export-Csv -Path $reportfile -NoTypeInformation
+		$report | Export-Csv -Path $reportfile -NoTypeInformation -Encoding 'UTF8'
 		Write-Host -ForegroundColor White "Report written to $reportfile in current path."
 		Get-Item $reportfile
 	}

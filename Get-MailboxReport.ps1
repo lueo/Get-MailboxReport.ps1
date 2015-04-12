@@ -196,7 +196,8 @@ foreach ($mb in $mailboxes)
 
 	$user = Get-User $mb
 	$aduser = Get-ADUser $mb.samaccountname -Properties Enabled,AccountExpirationDate
-
+	$casmbx = Get-CASMailbox $mb
+	
 	#Create a custom PS object to aggregate the data we're interested in
 	
 	$userObj = New-Object PSObject
@@ -246,7 +247,7 @@ foreach ($mb in $mailboxes)
 
     $userObj | Add-Member NoteProperty -Name "Primary Email Address" -Value $mb.PrimarySMTPAddress
     $userObj | Add-Member NoteProperty -Name "Organizational Unit" -Value $user.OrganizationalUnit
-
+    $userObj | Add-Member NoteProperty -Name "Active Sync enabled" -Value $casmbx.ActiveSyncEnabled
 	
 	#Add the object to the report
 	$report = $report += $userObj
@@ -268,7 +269,7 @@ else
 	}
 	else
 	{
-		$report | Export-Csv -Path $reportfile -NoTypeInformation
+		$report | Export-Csv -Path $reportfile -NoTypeInformation -Encoding 'UTF8'
 		Write-Host -ForegroundColor White "Report written to $reportfile in current path."
 		Get-Item $reportfile
 	}

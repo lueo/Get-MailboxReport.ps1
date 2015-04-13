@@ -247,7 +247,7 @@ foreach ($mb in $mailboxes)
 
     $userObj | Add-Member NoteProperty -Name "Primary Email Address" -Value $mb.PrimarySMTPAddress
     $userObj | Add-Member NoteProperty -Name "Organizational Unit" -Value $user.OrganizationalUnit
-    $userObj | Add-Member NoteProperty -Name "Active Sync enabled" -Value $casmbx.ActiveSyncEnabled
+    $userObj | Add-Member NoteProperty -Name "Active Sync Enabled" -Value $casmbx.ActiveSyncEnabled
 	
 	#Add the object to the report
 	$report = $report += $userObj
